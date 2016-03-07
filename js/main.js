@@ -9,11 +9,12 @@ function checkClick() {
 
 function handleClick(a, b) {
     if (!won) {
-        var win = checkWin();
+        var win;
         selected = [a, b];
         var previous = document.getElementById(getSelected()).innerHTML;
         if (previous === "") {
             document.getElementById(getSelected()).innerHTML = turn? "X": "O";
+            win = checkWin();
             switchTurn();
         }
         sendToOutput(getSelected());
