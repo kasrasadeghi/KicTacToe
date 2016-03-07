@@ -15,3 +15,7 @@ tr, th {
     border: 2px solid black;
     border-collapse: collapse;
 }
+
+ul {
+    list-style-type: none;
+}

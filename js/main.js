@@ -1,21 +1,33 @@
 var turn = true;
 var selected;
-var output = [];
+var outputCount = 0;
+var won = false;
 
 function checkClick() {
     alert("clicked!");
 }
 
 function handleClick(a, b) {
-    selected = [a, b];
-    var previous = document.getElementById(getSelected().toString()).innerHTML;
-    if (previous === "") {
-        document.getElementById(getSelected().toString()).innerHTML = turn? "X": "O";
+    if (!won) {
+        var win = checkWin();
+        selected = [a, b];
+        var previous = document.getElementById(getSelected()).innerHTML;
+        if (previous === "") {
+            document.getElementById(getSelected()).innerHTML = turn? "X": "O";
+            switchTurn();
+        }
+        sendToOutput(getSelected());
+        if (win != "") {
+            sendToOutput(win);
+            won = true;
+            handleVictory();
+        }
     }
-    checkWin();
-    document.getElementById("output").innerHTML = getSelected();
+}
 
-    turnSwitch();
+function handleVictory() {
+    sendToOutput("Play Again?");
+
 }
 
 function filterMaker(comparison) {
@@ -24,9 +36,23 @@ function filterMaker(comparison) {
     }
 }
 
-function checkArray(arr) {
-    var filtered = arr.filter(filterMaker(turn? "X":"O"));
-    return filtered.length != 0;
+//region function checkWin() {...}
+
+function checkWin() {
+    for (var i = 0; i < 3; ++i) {
+        if (checkRow(i)) {
+            return (turn?"X":"O") + " wins.";
+        }
+    }
+    for (var i = 0; i < 3; ++i) {
+        if (checkCol(i)) {
+            return (turn?"X":"O") + " wins.";
+        }
+    }
+    if(checkDiagonals()) {
+        return (turn?"X":"O") + " wins.";
+    }
+    else return "";
 }
 
 function checkCol(i) {
@@ -36,7 +62,7 @@ function checkCol(i) {
         document.getElementById("2," + i).innerHTML
     ];
 
-    return checkArray(col);
+    return checkArrayForWin(col);
 
 }
 
@@ -47,32 +73,61 @@ function checkRow(i) {
         document.getElementById(i + ",2").innerHTML
     ];
 
-    return checkArray(row);
+    return checkArrayForWin(row);
+}
+
+function checkMain() {
+    var set = [
+        document.getElementById("0,0").innerHTML,
+        document.getElementById("1,1").innerHTML,
+        document.getElementById("2,2").innerHTML
+    ];
+
+    return checkArrayForWin(set);
+}
+
+function checkOff() {
+    var set = [
+        document.getElementById("2,0").innerHTML,
+        document.getElementById("1,1").innerHTML,
+        document.getElementById("0,2").innerHTML
+    ];
+
+    return checkArrayForWin(set);
 }
 
 function checkDiagonals() {
-
+    if (checkMain()) {
+        return true;
+    }
+    else if (checkOff()) {
+        return true;
+    }
+    return false;
 }
 
-function checkWin() {
-    for (var i = 0; i < 3; ++i) {
-        checkRow(i);
-    }
-    for (var i = 0; i < 3; ++i) {
-        checkCol(i);
-    }
-    checkDiagonals();
+function checkArrayForWin(arr) {
+    var filtered = arr.filter(filterMaker(turn? "X":"O"));
+    return filtered.length === 3;
 }
+
+//endregion
 
 function sendToOutput(string) {
-    output.push(string);
-    document.getElementById("output").innerHTML = output.toString();
+    var parent = document.getElementById("outputList");
+    var child = document.createElement("li");
+    child.innerHTML = "> " + string;
+
+    if (++outputCount > 20) {
+        parent.removeChild(parent.lastElementChild);
+    }
+    parent.insertBefore(child, parent.firstChild);
 }
 
 function getSelected() {
     return selected.toString();
 }
 
-function turnSwitch() {
+function switchTurn() {
     turn = !turn;
 }
