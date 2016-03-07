@@ -9,7 +9,7 @@ function checkClick() {
 
 function handleClick(a, b) {
     if (!won) {
-        var win;
+        var win = "";
         selected = [a, b];
         var previous = document.getElementById(getSelected()).innerHTML;
         if (previous === "") {
@@ -42,18 +42,33 @@ function filterMaker(comparison) {
 function checkWin() {
     for (var i = 0; i < 3; ++i) {
         if (checkRow(i)) {
-            return (turn?"X":"O") + " wins.";
+            return (turn?"X":"O") + " wins!";
         }
     }
     for (var i = 0; i < 3; ++i) {
         if (checkCol(i)) {
-            return (turn?"X":"O") + " wins.";
+            return (turn?"X":"O") + " wins!";
         }
     }
     if(checkDiagonals()) {
-        return (turn?"X":"O") + " wins.";
+        return (turn?"X":"O") + " wins!";
     }
-    else return "";
+    else if (checkFull()) {
+        return "Tied!"
+    }
+    return "";
+}
+
+function checkFull() {
+    var board= [];
+    for (var i = 0; i < 3; ++i) {
+        var col = [
+            document.getElementById("0," + i).innerHTML,
+            document.getElementById("1," + i).innerHTML,
+            document.getElementById("2," + i).innerHTML
+        ];
+    }
+
 }
 
 function checkCol(i) {
@@ -113,6 +128,7 @@ function checkArrayForWin(arr) {
 }
 
 //endregion
+//TODO: implement tying
 
 function sendToOutput(string) {
     var parent = document.getElementById("outputList");
