@@ -10,6 +10,13 @@ table {
 }
 
 tr, th {
+    height: 50px;
+    width: 50%;
+    /*border: 2px solid black;*/
+    /*border-collapse: collapse;*/
+}
+
+.box {
     height: 100px;
     width: 33%;
     border: 2px solid black;

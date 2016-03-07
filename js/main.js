@@ -3,8 +3,18 @@ var selected;
 var outputCount = 0;
 var won = false;
 
-function checkClick() {
-    alert("clicked!");
+function reset() {
+    turn = true;
+    selected = [];
+    outputCount = 0;
+    won = false;
+    var list = document.getElementById("outputList");
+    while(list.childElementCount) list.removeChild(list.firstChild);
+    for(var i = 0; i < 3; ++i) {
+        for (var j = 0; j < 3; ++j) {
+            document.getElementById(i + "," + j).innerHTML = "";
+        }
+    }
 }
 
 function handleClick(a, b) {
@@ -22,13 +32,23 @@ function handleClick(a, b) {
             sendToOutput(win);
             won = true;
             handleVictory();
+            //TODO: get victory cross
         }
     }
 }
 
 function handleVictory() {
-    sendToOutput("Play Again?");
+    var string = "Play Again?";
+    var parent = document.getElementById("outputList");
+    var child = document.createElement("li");
+    child.innerHTML = "> " + string;
+    child.onclick = function() {reset();};
+    child.style="color:red";
 
+    if (++outputCount > 20) {
+        parent.removeChild(parent.lastElementChild);
+    }
+    parent.insertBefore(child, parent.firstChild);
 }
 
 function filterMaker(comparison) {
@@ -61,14 +81,14 @@ function checkWin() {
 
 function checkFull() {
     var board= [];
-    for (var i = 0; i < 3; ++i) {
-        var col = [
-            document.getElementById("0," + i).innerHTML,
-            document.getElementById("1," + i).innerHTML,
-            document.getElementById("2," + i).innerHTML
-        ];
-    }
+    for (var i = 0; i < 3; ++i) board.push(
+        document.getElementById("0," + i).innerHTML,
+        document.getElementById("1," + i).innerHTML,
+        document.getElementById("2," + i).innerHTML
+    );
 
+    var emptySpaces = board.filter(filterMaker(""));
+    return emptySpaces.length == 0;
 }
 
 function checkCol(i) {
@@ -124,7 +144,7 @@ function checkDiagonals() {
 
 function checkArrayForWin(arr) {
     var filtered = arr.filter(filterMaker(turn? "X":"O"));
-    return filtered.length === 3;
+    return filtered.length === arr.length;
 }
 
 //endregion
